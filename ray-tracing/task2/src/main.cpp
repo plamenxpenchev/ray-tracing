@@ -2,8 +2,8 @@
 #include <fstream>
 
 #include "ratio.hpp"
-#include "rng.hpp"
 #include "color.hpp"
+#include "vector_2d.hpp"
 
 using std::string;
 using std::ofstream;
@@ -18,26 +18,29 @@ int main() {
 	cin >> filename;
 
 	// implicitly closed file when out of scope
-	ofstream outputFileStream{filename};
+	ofstream outputFileStream{ filename };
 
 	if (!outputFileStream) {
 
 		throw runtime_error("Can't open file with name " + filename);
 	}
 
-	RandomNumberGenerator rng = RandomNumberGenerator(MinColor, MaxColor);
-
 	outputFileStream << "P3\n";
 	outputFileStream << Width << ' ' << Height << '\n';
 	outputFileStream << MaxColor;
 
-	for (int i = 0; i < Height; i++) {
+	// Since we fill the file from top to bottom and we want to stay 
+	// in the first quadrant of the Cartesian plane (positive x and y), 
+	// we decrement the y values and we increment the x to properly 
+	// compare against the shape equation.
+	for (int y = Height - 1; y >= 0; y--) {
 
 		outputFileStream << '\n';
 
-		for (int j = 0; j < Width; j++) {
+		for (int x = 0; x < Width; x++) {
 
-			writeColor(outputFileStream, rng, j, i);
+			Vector2D point = Vector2D(x,y);
+			writeColor(outputFileStream, point);
 		}
 	}
 }
